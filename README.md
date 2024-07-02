@@ -1,45 +1,51 @@
-# Assessment Contract and React App
+# Metacrafters ATM
+================
 
-This repository contains a simple Ethereum contract and a React app that interacts with it.
+A decentralized ATM system built on Ethereum using Solidity.
 
 ## Contract
 
-The contract is called `Assessment` and it has the following functionality:
+The contract is written in Solidity and deployed on the Ethereum blockchain. It allows users to deposit, withdraw, and set a new owner.
 
 ### Functions
 
-* `constructor(uint initBalance)`: Initializes the contract with a specified balance and sets the owner to the deployer.
+* `constructor(uint initBalance)`: Initializes the contract with an initial balance.
 * `getBalance()`: Returns the current balance of the contract.
-* `deposit(uint _amount)`: Allows the owner to deposit a specified amount of Ether into the contract.
-* `withdraw(uint _withdrawAmount)`: Allows the owner to withdraw a specified amount of Ether from the contract.
-* `transfer(address _recipient, uint _amount)`: Allows the owner to transfer a specified amount of Ether to a specified recipient.
+* `deposit(uint _amount)`: Deposits Ether into the contract.
+* `withdraw(uint _withdrawAmount)`: Withdraws Ether from the contract.
+* `checkOwner()`: Returns the current owner of the contract.
+* `setNewOwner(address _newOwner)`: Sets a new owner for the contract.
 
 ### Events
 
-* `Deposit(uint256 amount)`: Emitted when a deposit is made.
-* `Withdraw(uint256 amount)`: Emitted when a withdrawal is made.
+* `Deposit(uint256 amount)`: Emitted when Ether is deposited into the contract.
+* `Withdraw(uint256 amount)`: Emitted when Ether is withdrawn from the contract.
 
 ### Custom Error
 
-* `InsufficientBalance(uint256 balance, uint256 withdrawAmount)`: Thrown when a withdrawal is attempted with insufficient balance.
+* `InsufficientBalance(uint256 balance, uint256 withdrawAmount)`: Thrown when attempting to withdraw more Ether than the contract balance.
 
-## React App
+## Frontend
 
-The React app is a simple ATM interface that allows users to interact with the `Assessment` contract. It has the following features:
+The frontend is a simple React application that interacts with the contract using the Ethers.js library. It allows users to:
 
-* Connects to the user's MetaMask wallet and retrieves their account address.
-* Displays the user's account address and balance.
-* Allows the user to deposit, withdraw, and transfer Ether from the contract.
+* Connect their MetaMask wallet
+* Deposit and withdraw Ether
+* Set a new owner
 
-## Usage
+## Technical Details
 
-1. Install MetaMask and create an account.
-2. Deploy the contract using the `deploy.js` script.
-3. Open the app in a web browser.
-4. Connect to your MetaMask wallet and select the account that you want to use.
-5. The app will display your account address and balance.
-6. You can deposit, withdraw, and transfer Ether from the contract using the buttons on the app.
+* Contract written in Solidity 0.8.9
+* Ethers.js library used for contract interaction
 
-## Note
+## License
 
-This is a simple example and should not be used in production without further testing and security auditing.
+This project is licensed under the UNLICENSED license.
+
+## Contributing
+
+Contributions are welcome! Please open a pull request to contribute to the project.
+
+## Issues
+
+If you encounter any issues, please open an issue on this repository.
