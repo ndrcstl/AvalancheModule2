@@ -7,8 +7,7 @@ export default function HomePage() {
   const [account, setAccount] = useState(undefined);
   const [atm, setATM] = useState(undefined);
   const [balance, setBalance] = useState(undefined);
-  const [recipient, setRecipient] = useState(""); // add recipient state
-  const [transferAmount, setTransferAmount] = useState(0); // add transfer amount state
+  const [newOwner, setNewOwnerAddress] = useState(""); // add new owner state
 
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const atmABI = atm_abi.abi;
@@ -76,14 +75,14 @@ export default function HomePage() {
     }
   };
 
-  const transfer = async () => {
+  const handleSetNewOwner = async () => {
     if (atm) {
       try {
-        let tx = await atm.transfer(ethers.utils.parseEther(transferAmount.toString()), recipient);
+        let tx = await atm.setNewOwner(newOwner);
         await tx.wait();
-        getBalance();
+        console.log("New owner set successfully!");
       } catch (error) {
-        console.error("Error transferring funds:", error);
+        console.error("Error setting new owner:", error);
       }
     }
   };
@@ -111,17 +110,11 @@ export default function HomePage() {
         <button onClick={withdraw}>Withdraw 1 ETH</button>
         <input
           type="text"
-          value={recipient}
-          onChange={(e) => setRecipient(e.target.value)}
-          placeholder="Enter recipient address"
+          value={newOwner}
+          onChange={(e) => setNewOwnerAddress(e.target.value)}
+          placeholder="Enter new owner address"
         />
-        <input
-          type="number"
-          value={transferAmount}
-          onChange={(e) => setTransferAmount(e.target.value)}
-          placeholder="Enter transfer amount (in ETH)"
-        />
-        <button onClick={transfer}>Transfer</button>
+        <button onClick={handleSetNewOwner}>Set New Owner</button>
       </div>
     )
   }
@@ -135,7 +128,7 @@ export default function HomePage() {
       <header><h1>Welcome to the Metacrafters ATM!</h1></header>
       {initUser()}
       <style jsx>{`
-        .container {
+       .container {
           text-align: center
         }
       `}</style>
