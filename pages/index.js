@@ -7,7 +7,6 @@ export default function HomePage() {
   const [account, setAccount] = useState(undefined);
   const [atm, setATM] = useState(undefined);
   const [balance, setBalance] = useState(undefined);
-  const [newOwner, setNewOwnerAddress] = useState(""); // add new owner state
 
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const atmABI = atm_abi.abi;
@@ -61,7 +60,7 @@ export default function HomePage() {
 
   const deposit = async () => {
     if (atm) {
-      let tx = await atm.deposit(1);
+      let tx = await atm.deposit({ value: ethers.utils.parseEther("1.0") });
       await tx.wait()
       getBalance();
     }
@@ -75,25 +74,21 @@ export default function HomePage() {
     }
   };
 
-  const handleSetNewOwner = async () => {
+  const payInterest = async () => {
     if (atm) {
-      try {
-        let tx = await atm.setNewOwner(newOwner);
-        await tx.wait();
-        console.log("New owner set successfully!");
-      } catch (error) {
-        console.error("Error setting new owner:", error);
-      }
+      let tx = await atm.payInterest();
+      await tx.wait()
+      getBalance();
     }
   };
 
   const initUser = () => {
-    // Check to see if user has Metamask
+    // Checking for metamask
     if (!ethWallet) {
       return <p>Please install Metamask in order to use this ATM.</p>
     }
 
-    // Check to see if user is connected. If not, connect to their account
+    // Checking if account is connected
     if (!account) {
       return <button onClick={connectAccount}>Please connect your Metamask wallet</button>
     }
@@ -108,13 +103,7 @@ export default function HomePage() {
         <p>Your Balance: {balance} ETH</p>
         <button onClick={deposit}>Deposit 1 ETH</button>
         <button onClick={withdraw}>Withdraw 1 ETH</button>
-        <input
-          type="text"
-          value={newOwner}
-          onChange={(e) => setNewOwnerAddress(e.target.value)}
-          placeholder="Enter new owner address"
-        />
-        <button onClick={handleSetNewOwner}>Set New Owner</button>
+        <button onClick={payInterest}>Pay Interest</button>
       </div>
     )
   }
