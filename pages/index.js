@@ -7,9 +7,14 @@ export default function HomePage() {
   const [account, setAccount] = useState(undefined);
   const [atm, setATM] = useState(undefined);
   const [balance, setBalance] = useState(undefined);
+  const [interest, setInterest] = useState(0);
 
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const atmABI = atm_abi.abi;
+
+  useEffect(() => {
+    getWallet();
+  }, []);
 
   const getWallet = async () => {
     if (window.ethereum) {
@@ -17,15 +22,15 @@ export default function HomePage() {
     }
 
     if (ethWallet) {
-      const account = await ethWallet.request({ method: "eth_accounts" });
-      handleAccount(account);
+      const accounts = await ethWallet.request({ method: "eth_accounts" });
+      handleAccount(accounts);
     }
   };
 
-  const handleAccount = (account) => {
-    if (account) {
-      console.log("Account connected: ", account);
-      setAccount(account);
+  const handleAccount = (accounts) => {
+    if (accounts.length > 0) {
+      console.log("Account connected:", accounts[0]);
+      setAccount(accounts[0]);
     } else {
       console.log("No account found");
     }
@@ -33,11 +38,11 @@ export default function HomePage() {
 
   const connectAccount = async () => {
     if (!ethWallet) {
-      alert('MetaMask wallet is required to connect');
+      alert("MetaMask wallet is required to connect");
       return;
     }
 
-    const accounts = await ethWallet.request({ method: 'eth_requestAccounts' });
+    const accounts = await ethWallet.request({ method: "eth_requestAccounts" });
     handleAccount(accounts);
 
     // once wallet is set we can get a reference to our deployed contract
@@ -61,7 +66,7 @@ export default function HomePage() {
   const deposit = async () => {
     if (atm) {
       let tx = await atm.deposit({ value: ethers.utils.parseEther("1.0") });
-      await tx.wait()
+      await tx.wait();
       getBalance();
     }
   };
@@ -69,7 +74,7 @@ export default function HomePage() {
   const withdraw = async () => {
     if (atm) {
       let tx = await atm.withdraw(1);
-      await tx.wait()
+      await tx.wait();
       getBalance();
     }
   };
@@ -77,23 +82,24 @@ export default function HomePage() {
   const payInterest = async () => {
     if (atm) {
       let tx = await atm.payInterest();
-      await tx.wait()
+      await tx.wait();
       getBalance();
+      setInterest(interest + 1);
     }
   };
 
   const initUser = () => {
-    // Checking for metamask
+    // Check to see if user has Metamask
     if (!ethWallet) {
-      return <p>Please install Metamask in order to use this ATM.</p>
+      return <p>Please install Metamask in order to use this ATM.</p>;
     }
 
-    // Checking if account is connected
+    // Check to see if user is connected. If not, connect to their account
     if (!account) {
-      return <button onClick={connectAccount}>Please connect your Metamask wallet</button>
+      return <button onClick={connectAccount}>Please connect your Metamask wallet</button>;
     }
 
-    if (balance == undefined) {
+    if (balance === undefined) {
       getBalance();
     }
 
@@ -101,26 +107,25 @@ export default function HomePage() {
       <div>
         <p>Your Account: {account}</p>
         <p>Your Balance: {balance} ETH</p>
+        <p>Total Interest Paid: {interest}</p>
         <button onClick={deposit}>Deposit 1 ETH</button>
         <button onClick={withdraw}>Withdraw 1 ETH</button>
         <button onClick={payInterest}>Pay Interest</button>
       </div>
-    )
-  }
-
-  useEffect(() => {
-    getWallet();
-  }, []);
+    );
+  };
 
   return (
     <main className="container">
-      <header><h1>Welcome to the Metacrafters ATM!</h1></header>
+      <header>
+        <h1>Welcome to the Metacrafters ATM!</h1>
+      </header>
       {initUser()}
       <style jsx>{`
-       .container {
-          text-align: center
+        .container {
+          text-align: center;
         }
       `}</style>
     </main>
-  )
+  );
 }
