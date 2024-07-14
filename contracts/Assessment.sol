@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+//import "hardhat/console.sol"
+
 contract Assessment {
     address payable public owner;
     uint256 public balance;
+    uint256 public interestAmount; 
 
     event Deposit(uint256 amount);
     event Withdraw(uint256 amount);
@@ -12,6 +15,7 @@ contract Assessment {
     constructor(uint initBalance) payable {
         owner = payable(msg.sender);
         balance = initBalance;
+        interestAmount = 0;
     }
 
     function getBalance() public view returns(uint256){
@@ -50,10 +54,11 @@ contract Assessment {
         emit Withdraw(_withdrawAmount);
     }
 
-    function payInterest() public {
-        require(msg.sender == owner, "You are not the owner of this account");
-        uint256 interestAmount = balance * 2 / 100; // 2% interest
+    function payInterest(uint256 _paymentAmount) public onlyOwner {
+        require(balance <= _paymentAmount, "Insufficient balance to pay interest");
+        interestAmount = balance * 2 / 100;
         balance += interestAmount;
         emit InterestPaid(interestAmount);
     }
+
 }
