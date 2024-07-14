@@ -12,10 +12,6 @@ export default function HomePage() {
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const atmABI = atm_abi.abi;
 
-  useEffect(() => {
-    getWallet();
-  }, []);
-
   const getWallet = async () => {
     if (window.ethereum) {
       setEthWallet(window.ethereum);
@@ -81,7 +77,7 @@ export default function HomePage() {
 
   const payInterest = async () => {
     if (atm) {
-      let tx = await atm.payInterest();
+      let tx = await atm.payInterest(balance);
       await tx.wait();
       getBalance();
       setInterest(interest + 1);
